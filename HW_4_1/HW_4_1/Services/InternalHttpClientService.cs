@@ -39,6 +39,12 @@ public class InternalHttpClientService : IInternalHttpClientService
             var response = JsonConvert.DeserializeObject<TResponse>(resultContent);
             return response!;
         }
+        else
+        {
+            var resultContent = await result.Content.ReadAsStringAsync();
+            var response = JsonConvert.DeserializeObject<TResponse>(resultContent);
+            return response!;
+        }
 
         return default(TResponse)!;
     }
