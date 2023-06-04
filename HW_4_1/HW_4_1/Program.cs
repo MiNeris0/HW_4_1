@@ -13,17 +13,6 @@ namespace HW_4_1
     {
         static async Task Main(string[] args)
         {
-            void ConfigureServices(ServiceCollection serviceCollection, IConfiguration configuration)
-            {
-                serviceCollection.AddOptions<ApiOption>().Bind(configuration.GetSection("Api"));
-                serviceCollection
-                    .AddLogging(configure => configure.AddConsole())
-                    .AddHttpClient()
-                    .AddTransient<IInternalHttpClientService, InternalHttpClientService>()
-                    .AddTransient<IUserService, UserService>()
-                    .AddTransient<App>();
-            }
-
             IConfiguration configuration = new ConfigurationBuilder()
                 .AddJsonFile("config.json")
                 .Build();
@@ -35,6 +24,17 @@ namespace HW_4_1
             var app = provider.GetService<App>();
             await app!.Start();
             Console.ReadKey();
+        }
+
+        public static void ConfigureServices(ServiceCollection serviceCollection, IConfiguration configuration)
+        {
+            serviceCollection.AddOptions<ApiOption>().Bind(configuration.GetSection("Api"));
+            serviceCollection
+                .AddLogging(configure => configure.AddConsole())
+                .AddHttpClient()
+                .AddTransient<IInternalHttpClientService, InternalHttpClientService>()
+                .AddTransient<IUserService, UserService>()
+                .AddTransient<App>();
         }
     }
 }

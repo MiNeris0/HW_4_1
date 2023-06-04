@@ -143,7 +143,7 @@ public class UserService : IUserService
 
         if (result != null)
         {
-            _logger.LogInformation($"User with id = {result?.Id} was updated\n\tName: {result?.Name}, position: {result?.Job}\n\tPatched at: {result?.UpdatedAt}");
+            _logger.LogInformation($"User with id = {result?.Id} was patched\n\tName: {result?.Name}, position: {result?.Job}\n\tPatched at: {result?.UpdatedAt}");
         }
 
         return result;
