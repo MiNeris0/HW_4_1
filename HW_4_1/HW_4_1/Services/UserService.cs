@@ -18,9 +18,6 @@ public class UserService : IUserService
     private readonly ILogger<UserService> _logger;
     private readonly ApiOption _options;
     private readonly string _userApi = "api/users/";
-    private readonly string _resourceApi = "api/unknown/";
-    private readonly string _registerApi = "api/register";
-    private readonly string _loginApi = "api/login";
     private readonly string _usersApiDelayed = "api/users?delay=3";
 
     public UserService(
@@ -70,42 +67,6 @@ public class UserService : IUserService
         return result?.Data;
     }
 
-    public async Task<ListResponse<ResourceDto>> GetResourcesList()
-    {
-        var result = await _httpClientService.SendAsync<ListResponse<ResourceDto>, object>($"{_options.Host}{_resourceApi}", HttpMethod.Get);
-
-        if (result != null)
-        {
-            _logger.LogInformation($"Page: {result.Page},\n\tPer page: {result.PerPage}\n\t,Total: {result.Total}\n\tTotal pages: {result.TotalPages}\n");
-
-            foreach( var resource in result.Data)
-            {
-                _logger.LogInformation($"id = {resource.Id}\n\tName: {resource.Name}\n\tYear: {resource.Year}\n\tColor: {resource.Color}\n\tPantone value: {resource.PantoneValue}");
-            }
-
-            _logger.LogInformation($"Support:\n\tUrl: {result.Support.Url}\n\tText: {result.Support.Text}");
-        }
-
-        return result;
-    }
-
-    public async Task<ResourceDto> GetResourceById(int id)
-    {
-        var result = await _httpClientService.SendAsync<BaseResponse<ResourceDto>, object>($"{_options.Host}{_resourceApi}{id}", HttpMethod.Get);
-
-        if (result != null)
-        {
-            _logger.LogInformation($"Resource with id = {result.Data.Id} was found.\n\tName: {result.Data.Name}\n\tYear: {result.Data.Year}\n\tColor: {result.Data.Color}\n\tPantone value: {result.Data.PantoneValue}");
-            _logger.LogInformation($"Support:\n\tUrl: {result.Support.Url}\n\tText: {result.Support.Text}");
-        }
-        else
-        {
-            _logger.LogInformation($"Resource with id = {id} was not found.");
-        }
-
-        return result?.Data;
-    }
-
     public async Task<UserResponse> CreateUser(string name, string job)
     {
         var result = await _httpClientService.SendAsync<UserResponse, UserRequest>(
@@ -144,54 +105,6 @@ public class UserService : IUserService
         if (result != null)
         {
             _logger.LogInformation($"User with id = {result?.Id} was patched\n\tName: {result?.Name}, position: {result?.Job}\n\tPatched at: {result?.UpdatedAt}");
-        }
-
-        return result;
-    }
-
-    public async Task<RegisterResponse> RegisterUser(string email, string password)
-    {
-        var result = await _httpClientService.SendAsync<RegisterResponse, RegisterRequest>($"{_options.Host}{_registerApi}", HttpMethod.Post, new RegisterRequest() { Email = email, Password = password });
-
-        if (result != null)
-        {
-            _logger.LogInformation($"Successful registration!\n\tEmail: {result.Id}\n\tToken: {result.Token}");
-        }
-
-        return result;
-    }
-
-    public async Task<RegisterResponse> RegisterUser(string email)
-    {
-        var result = await _httpClientService.SendAsync<RegisterResponse, RegisterRequest>($"{_options.Host}{_registerApi}", HttpMethod.Post, new RegisterRequest() { Email = email, Password = default });
-
-        if (result is null)
-        {
-            _logger.LogInformation("Unsuccessful registration!\n\tError: missing password");
-        }
-
-        return result;
-    }
-
-    public async Task<LoginResponse> LoginUser(string email, string password)
-    {
-        var result = await _httpClientService.SendAsync<LoginResponse, RegisterRequest>($"{_options.Host}{_loginApi}", HttpMethod.Post, new RegisterRequest { Email = email, Password = password });
-
-        if (result != null)
-        {
-            _logger.LogInformation($"You have been logged in\n\tToken: {result.Token}");
-        }
-
-        return result;
-    }
-
-    public async Task<LoginResponse> LoginUser(string email)
-    {
-        var result = await _httpClientService.SendAsync<LoginResponse, RegisterRequest>($"{_options.Host}{_loginApi}", HttpMethod.Post, new RegisterRequest { Email = email, Password = default });
-
-        if (result is null)
-        {
-            _logger.LogInformation("Login failed.\n\tError: missing password");
         }
 
         return result;

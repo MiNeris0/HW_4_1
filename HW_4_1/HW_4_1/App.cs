@@ -14,29 +14,50 @@ namespace HW_4_1
     public class App
     {
         private readonly IUserService _userService;
+        private readonly IResourceService _resourceService;
+        private readonly IRegisterService _registerService;
 
-        public App(IUserService userService)
+        public App(IUserService userService, IResourceService resourceService, IRegisterService registerService)
         {
             _userService = userService;
+            _resourceService = resourceService;
+            _registerService = registerService;
         }
 
         public async Task Start()
         {
-            await _userService.GetUsersByPage(2); // Task 1
-            await _userService.GetUserById(2); // Task 2   
-            await _userService.GetUserById(23); // Task 3
-            await _userService.GetResourcesList(); // Task 4
-            await _userService.GetResourceById(2); // Task 5
-            await _userService.GetResourceById(23); //Task 6
-            await _userService.CreateUser("Morpheus", "leader"); // Task 7
-            await _userService.UpdateUser(2, "Morpheus", "Zion resident"); // Task 8
-            await _userService.PatchUpdateUser(2, "Morpheus", "zion resident"); // Task 9
-            await _userService.DeleteUserById(2); // Task 10
-            await _userService.RegisterUser("eve.holt@reqres.in", "pistol"); // Task 11
-            await _userService.RegisterUser("sydney@fife"); // Task 12
-            await _userService.LoginUser("eve.holt@reqres.in", "cityslicka"); // Task 13
-            await _userService.LoginUser("peter@klaven"); // Task 14
-            await _userService.GetUsersDelayed(); // Task 15
+            var getUsers = Task.Run(async () => await _userService.GetUsersByPage(2)); // Task 1
+            var getUser1 = Task.Run(async () => await _userService.GetUserById(2)); // Task 2   
+            var getUser2 = Task.Run(async () => await _userService.GetUserById(23)); // Task 3
+            var getResources = Task.Run(async () => await _resourceService.GetResourcesList()); // Task 4
+            var getResource1 = Task.Run(async () => await _resourceService.GetResourceById(2)); // Task 5
+            var getResource2 = Task.Run(async () => await _resourceService.GetResourceById(23)); //Task 6
+            var createUser = Task.Run(async () => await _userService.CreateUser("Morpheus", "leader")); // Task 7
+            var updateUser = Task.Run(async () => await _userService.UpdateUser(2, "Morpheus", "Zion resident")); // Task 8
+            var patchUser = Task.Run(async () => await _userService.PatchUpdateUser(2, "Morpheus", "zion resident")); // Task 9
+            var deleteUser = Task.Run(async () => await _userService.DeleteUserById(2)); // Task 10
+            var registerUser1 = Task.Run(async () => await _registerService.RegisterUser("eve.holt@reqres.in", "pistol")); // Task 11
+            var registerUser2 = Task.Run(async () => await _registerService.RegisterUser("sydney@fife")); // Task 12
+            var loginUser1 = Task.Run(async () => await _registerService.LoginUser("eve.holt@reqres.in", "cityslicka")); // Task 13
+            var loginUser2 = Task.Run(async () => await _registerService.LoginUser("peter@klaven")); // Task 14
+            var getUsersDelayed = Task.Run(async () => await _userService.GetUsersDelayed()); // Task 15
+
+            await Task.WhenAll(
+                getUsers,
+                getUser1,
+                getUser2,
+                getResources,
+                getResource1,
+                getResource2,
+                createUser,
+                updateUser,
+                patchUser,
+                deleteUser,
+                registerUser1,
+                registerUser2,
+                loginUser1,
+                loginUser2,
+                getUsersDelayed);
         }
     }
 }

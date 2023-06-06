@@ -34,6 +34,8 @@ namespace HW_4_1
                 .AddHttpClient()
                 .AddTransient<IInternalHttpClientService, InternalHttpClientService>()
                 .AddTransient<IUserService, UserService>()
+                .AddTransient<IResourceService, ResourceService>()
+                .AddTransient<IRegisterService, RegisterService>()
                 .AddTransient<App>();
         }
     }
